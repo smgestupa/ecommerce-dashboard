@@ -17,7 +17,7 @@
 
 <section class="search-section">
     <!-- Search input -->
-    <input class="search-input" type="text" placeholder="Type a query here" bind:value={ searchValue }>
+    <input class="search-input" type="text" placeholder="Type something here" bind:value={ searchValue }>
 
     <!-- Column box -->
     <select name="columns" id="columns" bind:value={ specifiedColumn }>
