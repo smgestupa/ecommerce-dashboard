@@ -67,8 +67,6 @@
     const setSelectedTableData = ( rowIndex ) => selectedTableData = Object.entries( tableRows )[ rowIndex ];
 
     const tableRefresh = async () => {
-        tableRows = {}; // Clear the existing table rows
-
         try {
             // Check if table rows is empty, then get table rows
             // TODO: rename [getTables()] -> [getRows()]
@@ -94,12 +92,12 @@
                     'Content-Type': 'application/json'
                 }
             } );
-
+            
         tableRows = await req.json();
-
+        
         // Check if returned JSON data is less than
         // 10, then that means it's the last page
-        if ( Object.keys( tableRows ).length < 10 ) lastPage = true;
+        if ( Object.keys( tableRows ).length <= 10 ) lastPage = true;
     }
 
     const searchRow = async ( column, query ) => {
@@ -110,6 +108,7 @@
                 }
             } );
         
+        tableRows = {}; // Clear the existing table rows
         tableRows = await req.json();
         tableRefresh();
     }
@@ -122,6 +121,7 @@
                 }
             } );
         
+        tableRows = {}; // Clear the existing table rows
         tableRows = await req.json();
 
         // Check if returned JSON data is less than

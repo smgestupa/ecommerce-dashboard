@@ -2,16 +2,17 @@
     /**
     *  Imports
     */
-
     import { fade } from "svelte/transition";
 
 
     /**
     *  Variables
     */
-
     export let tableHeaders, tableRows, rowIndex; // Prop variable(s)
     export let changeRowIndex, setSelectedTableData; // Prop function(s)
+
+    let rowLength = Object.keys( tableRows ).length;
+    if ( rowLength > 10 ) rowLength--; // If the rows are 11, then reduce since we only want 10 rows to show up
 </script>
 
 <section in:fade={ { duration: 300 } }>
