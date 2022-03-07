@@ -1,8 +1,8 @@
 <script context="module">
-    // Get this page name, which will be used
-    // for getting all available rows from the
-    // table with the same name
     export const load = async ( { params } ) => {
+        // Get this page name, which will be used
+        // for getting all available rows from the
+        // table with the same name
         return { 
             props: { 
                 tableName: params.table
@@ -68,11 +68,8 @@
 
     const tableRefresh = async () => {
         try {
-            // Check if table rows is empty, then get table rows
-            // TODO: rename [getTables()] -> [getRows()]
-            if ( Object.keys( tableRows ).length === 0 ) await getRows();
-            // Check if table headers are empty, then fill up with table columns
-            if ( tableHeaders.length === 0 ) getHeaders();
+            await getRows(); // Get table rows
+            if ( tableHeaders.length === 0 ) getHeaders(); // If [tableHeaders] is empty, fill it with table columns
         } catch ( err ) {
             throw new Error( `Something went wrong with getting the contents of this table: ${ tableName }` );
         }
