@@ -71,7 +71,7 @@
             await getRows(); // Get table rows
             if ( tableHeaders.length === 0 ) getHeaders(); // If [tableHeaders] is empty, fill it with table columns
         } catch ( err ) {
-            throw new Error( `Something went wrong with getting the contents of this table: ${ tableName }` );
+            throw new Error( err.message ?? `Please check if this table exists; ideally, double check your database` );
         }
     }
 
@@ -89,7 +89,8 @@
                     'Content-Type': 'application/json'
                 }
             } );
-            
+        
+        if ( req.status == 302 ) throw new Error( 'No rows exist in this table, please add one to procceed' );
         tableRows = await req.json();
         
         // Check if returned JSON data is less than
@@ -250,8 +251,8 @@ in:fade={ { duration: 300 } }>
 
             <!-- Loading messages -->
             <div class="loading-error">
-                <h3 class="loading-error-message">{ err.message }</h3>
-                <h3 class="loading-error-submsg">Please check if this table exists, or rows exist in this table; ideally check your database</h3>
+                <h3 class="loading-error-message">Something went wrong with getting the contents of this table: { tableName }</h3>
+                <h3 class="loading-error-submsg">{ err.message }</h3>
             </div>
         </header>
     </section>
