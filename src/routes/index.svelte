@@ -71,7 +71,8 @@
     </section>
 { :then _ }
     { #if $showConfirmDeleteTableModal }
-        <ConfirmDeleteTable tableName={ selectedTable } />
+        <ConfirmDeleteTable tableName={ selectedTable }
+        fetchTables={ fetchTables } />
     { /if }
     
     { #if !$dashboardLoading }

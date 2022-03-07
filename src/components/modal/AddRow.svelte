@@ -14,11 +14,11 @@
      * Variables
      */
     export let tableName, tableHeaders, tableRefresh; // Prop variable(s)
-    const statusMessage = "You have successfully added row(s) to the database.";
+    const statusMessage = "You have successfully added row(s) to the database";
     let rows = {}; // List of rows that is expected to be added
     let disabledColumns = [];
     let numberOfRows = 0;
-    let modalLoading = false, statusCode;
+    let modalLoading = false, statusCode = undefined;
 
     
     /**

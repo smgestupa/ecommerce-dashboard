@@ -16,8 +16,8 @@
     export let tableRefresh; // Prop function(s)
     const selectedColumnsData = Object.entries( selectedRowData[ 1 ] );
     const newColumnsData = Object.entries( selectedRowData[ 1 ] );
-    const statusMessage = "You have successfully edited the selected row.";
-    let modalLoading = false, statusCode;
+    const statusMessage = "You have successfully edited the selected row";
+    let modalLoading = false, statusCode = undefined;
 
 
     /**

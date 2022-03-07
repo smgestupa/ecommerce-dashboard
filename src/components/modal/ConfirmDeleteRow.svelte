@@ -13,8 +13,8 @@
      * Variables
      */
     export let tableName, rowData, tableRefresh; // Prop variable(s)
-    const statusMessage = "You have successfully delete the table " + tableName + ".";
-    let modalLoading = false, statusCode;
+    const statusMessage = "You have successfully delete a row from the table " + tableName;
+    let modalLoading = false, statusCode = undefined;
 
     
     /**
