@@ -1,34 +1,34 @@
 <script>
     /**
-    *  Imports
-    */
-
+     * Imports
+     */
     import { fly, fade } from 'svelte/transition';
-    import { dashboardRefresh, showConfirmDeleteTableModal } from "$stores/stores.js";
+    import { dashboardLoading, showConfirmDeleteTableModal } from "$stores/stores.js";
     import { X, Warning } from "$icons/svg.js";
 
 
     /**
-    *  Variables
-    */
-
+     * Variables
+     */
     export let tableName; // Prop variable(s)
 
 
     /**
-    *  Functions
-    */
+     * Will close this
+     * component modal
+     */
+    const closeModal = () => $showConfirmDeleteTableModal = false;
 
-    const closeModal = () =>{
-        $showConfirmDeleteTableModal = false;
-    }
-
+    /**
+     * Will be used to delete
+     * a table
+     */
     const deleteTable = async () => {
-        $dashboardRefresh = true;
+        $dashboardLoading = true; 
 
         try {
-            // Pass the table name that needs
-            // to be deleted
+            // Pass the table name that
+            // is needed to be deleted
             await fetch( `http://localhost:8093/api/v1/tables/${ tableName.toLowerCase() }`, {
                 method: 'DELETE',
             } );
@@ -36,8 +36,8 @@
             console.error( err );
         }
 
-        $showConfirmDeleteTableModal = false;
-        $dashboardRefresh = false;
+        closeModal();
+        setTimeout( () => closeModal(), 1500 );
     };
 </script>
 

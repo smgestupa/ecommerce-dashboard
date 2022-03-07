@@ -1,18 +1,18 @@
 <script>
     /**
-    *  Imports
-    */
+     * Imports
+     */
     import { fade } from "svelte/transition";
 
 
     /**
-    *  Variables
-    */
+     * Variables
+     */
     export let tableHeaders, tableRows, rowIndex; // Prop variable(s)
-    export let changeRowIndex, setSelectedTableData; // Prop function(s)
+    export let changeRowIndex, setSelectedRowData; // Prop function(s)
 
-    let rowLength = Object.keys( tableRows ).length;
-    if ( rowLength > 10 ) rowLength--; // If the rows are 11, then reduce since we only want 10 rows to show up
+    let rowLength = Object.keys( tableRows ).length; // Pass in the length of [tableRows]
+    if ( rowLength > 10 ) rowLength--; // If the rows are 11, then decrement the length since we only want 10 rows to show up
 </script>
 
 <section in:fade={ { duration: 300 } }>
@@ -31,7 +31,7 @@
                 { rowIndex === index + 1 ?
                 'bg-blue-100' :
                 'bg-white' }"
-                on:click={ () => { changeRowIndex( index ); setSelectedTableData( index ) } }>
+                on:click={ () => { changeRowIndex( index ); setSelectedRowData( index ) } }>
                     { #each Object.values( tableRows[ index ] ) as column }
                         <td>{ column.length > 15 ? column.slice( 0, 16 ) + "..." : column }</td> 
                     { /each }

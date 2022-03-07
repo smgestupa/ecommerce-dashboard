@@ -1,37 +1,38 @@
 <script>
     /**
-    *  Imports
-    */
-
+     * Imports
+     */
     import { fly, fade } from 'svelte/transition';
     import { showConfirmDeleteRowModal } from "$stores/stores.js";
     import { X, Warning } from "$icons/svg.js";
     import ModalLoading from "$components/modal/components/ModalLoading.svelte";
     import ModalStatus from "$components/modal/components/ModalStatus.svelte";
 
-    /**
-    *  Variables 
-    */
 
+    /**
+     * Variables
+     */
     export let tableName, rowData, tableRefresh; // Prop variable(s)
     const statusMessage = "You have successfully delete the table " + tableName + ".";
     let modalLoading = false, statusCode;
 
     
     /**
-    *   Functions 
-    */
+     * Will close this
+     * component modal
+     */
+    const closeModal = () => $showConfirmDeleteRowModal = false;
 
-    const closeModal = () => {
-        $showConfirmDeleteRowModal = false;
-    }
-
+    /**
+     * Will be used to delete
+     * a row from a table
+     */
     const deleteRow = async () => {
         modalLoading = true;
 
         try {
-            // Pass the data of the selected row
-            // as the body
+            // Pass the data of the 
+            // selected row as the body
             const req = await fetch( `http://localhost:8093/api/v1/tables/${ tableName.toLowerCase() }`, {
                 method: 'DELETE',
                 headers: {
@@ -39,9 +40,8 @@
                 },
                 body: rowData
             } );
-            const res = await req.status;
-            
-            statusCode = res;
+
+            statusCode = req.status;
             tableRefresh();
         } catch ( err ) {
             console.error( err );

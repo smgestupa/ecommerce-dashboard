@@ -1,5 +1,7 @@
 <script>
-    // Imports
+    /**
+     * Imports
+     */
     import { fade } from 'svelte/transition';
     import LeftArrow from '$icons/svg/LeftArrow.svelte';
     import Warning from '$icons/svg/Warning.svelte';

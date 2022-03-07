@@ -1,8 +1,8 @@
 <script context="module">
     export const load = async ( { params } ) => {
-        // Get this page name, which will be used
-        // for getting all available rows from the
-        // table with the same name
+        // Get this page name, to 
+        // get available rows from
+        // the specified table
         return { 
             props: { 
                 tableName: params.table
@@ -13,9 +13,8 @@
 
 <script>
     /**
-    *  Imports
-    */
-
+     * Imports
+     */
     import { fade } from "svelte/transition";
     import { showAddRowModal, showConfirmDeleteRowModal, showEditRowModal } from "$stores/stores.js";
     import { Loading, Warning, LeftArrow } from "$icons/svg.js";
@@ -28,9 +27,8 @@
 
 
     /**
-    *  Variables
-    */
-
+     * Variables
+     */
     export let tableName; // Prop variable(s)
     tableName = tableName.charAt( 0 ).toUpperCase() + tableName.substring( 1 ); // Uppercase first letter only
 
@@ -38,50 +36,91 @@
     let tableHeaders = []; // Table columns
     let rowIndex = undefined; // Will be used to manipulate a specific table row
     let rowData = {}; // Row data that is/are deleted/added, to be sent to the database
-    let selectedTableData = {}; // Data from the selected row
+    let selectedRowData = {}; // Data from the selected row
     let pageNumber = 0; // Current page number
     let lastPage = false; // Check if last page
 
 
-    /**
-    *  Functions
+   /**
+    * Will be used to select
+    * row, based on an index
+    * in the table tag
+    * 
+    * @param index The position of the row inside the table 
     */
-
     const changeRowIndex = ( index ) => {
         rowIndex = index + 1;
-        rowData = JSON.stringify( Object.entries( tableRows )[ index ][ 1 ] );
+        rowData = JSON.stringify( Object.entries( tableRows )[ index ][1] );
     }
 
+    /**
+     * Will open the modal for
+     * adding rows
+     */
     const openAddRowModal = () => $showAddRowModal = true;
 
+    /**
+     * Will open the modal for
+     * deleting a row
+     */
     const openConfirmDeleteRowModal = () => {
         if ( rowIndex === undefined ) return;
         $showConfirmDeleteRowModal = true;
     }
 
+    /**
+     * Will open the modal for
+     * editing a row
+     */
     const openEditRowModal = () => {
         if ( rowIndex === undefined ) return;
         $showEditRowModal = true;
     }
 
-    const setSelectedTableData = ( rowIndex ) => selectedTableData = Object.entries( tableRows )[ rowIndex ];
+    /**
+     * Will be used to pass in
+     * selected row data for
+     * modifying
+     * 
+     * @param rowIndex The position of the row inside the table 
+     */
+    const setSelectedRowData = ( rowIndex ) => selectedRowData = Object.entries( tableRows )[ rowIndex ];
 
+    /**
+     * Will be used to initialize
+     * table rows for the table
+     * tag
+     */
     const tableRefresh = async () => {
         try {
-            await getRows(); // Get table rows
+            if ( Object.entries( tableRows ).length === 0 ) await getRows(); // Initialize [tableRows]
             if ( tableHeaders.length === 0 ) getHeaders(); // If [tableHeaders] is empty, fill it with table columns
+
+            // Check if returned JSON data is less 
+            // than 10, then that means we're
+            // on the last page
+            if ( Object.keys( tableRows ).length <= 10 ) lastPage = true;
+            else lastPage = false; // Else, we're on the last page
         } catch ( err ) {
             throw new Error( err.message ?? `Please check if this table exists; ideally, double check your database` );
         }
     }
 
+    /**
+     * Will be used to initialize
+     * table headers for the table
+     * tag
+     */
     const getHeaders = () => {
-        // Loop to get table columns
-        for ( const header of Object.keys( tableRows[0] ) ) {
+        for ( const header of Object.keys( tableRows[0] ) ) { // Loop to get table columns
             tableHeaders.push( header );
         }
     }
 
+    /**
+     * Will be used to fetch available
+     * rows from the database
+     */
     const getRows = async () => {
         const req = await fetch( `http://localhost:8093/api/v1/tables/${ tableName.toLowerCase() }`, {
                 method: 'GET',
@@ -90,14 +129,19 @@
                 }
             } );
         
+        // Check if the code is 302, that means no rows exist in this table
         if ( req.status == 302 ) throw new Error( 'No rows exist in this table, please add one to procceed' );
         tableRows = await req.json();
-        
-        // Check if returned JSON data is less than
-        // 10, then that means it's the last page
-        if ( Object.keys( tableRows ).length <= 10 ) lastPage = true;
     }
 
+    /**
+     * Will be used to fetch certain
+     * rows from the database, based
+     * on a keyword(s)
+     * 
+     * @param column Where we want to find the value in the table
+     * @param query Keyword(s) used to find a certain value
+     */
     const searchRow = async ( column, query ) => {
         const req = await fetch( `http://localhost:8093/api/v1/tables/${ tableName.toLowerCase() }/?column=${ column }&search=${ query }`, {
                 method: 'GET',
@@ -106,11 +150,18 @@
                 }
             } );
         
-        tableRows = {}; // Clear the existing table rows
         tableRows = await req.json();
         tableRefresh();
     }
 
+    /**
+     * Will be used to fetch rows,
+     * starting from a specific
+     * offset
+     * 
+     * @param page Offset used to get rows from a specific starting index
+     * @param move True means previous page, false means next page
+     */
     const switchPageRow = async ( page, move ) => {
         const req = await fetch( `http://localhost:8093/api/v1/tables/${ tableName.toLowerCase() }/${ move ? --page : ++page }`, {
                 method: 'GET',
@@ -119,15 +170,9 @@
                 }
             } );
         
-        tableRows = {}; // Clear the existing table rows
         tableRows = await req.json();
 
-        // Check if returned JSON data is less than
-        // 10, then that means it's the last page
-        if ( Object.keys( tableRows ).length < 10 ) lastPage = true;
-        else lastPage = false; // else, it's not the last page
-
-        pageNumber = page; // Switch page
+        pageNumber = page; // Switch page offset
         rowIndex = undefined; // Change back to the default value of [rowIndex]
         tableRefresh();
     }
@@ -183,7 +228,7 @@ in:fade={ { duration: 300 } }>
     { #if $showEditRowModal }
         <EditRow tableName={ tableName } 
         tableHeaders={ tableHeaders }
-        selectedTableData={ selectedTableData }
+        selectedRowData={ selectedRowData }
         tableRefresh={ tableRefresh }/>
     { /if }
 
@@ -233,7 +278,7 @@ in:fade={ { duration: 300 } }>
             tableRows={ tableRows }
             rowIndex={ rowIndex }
             changeRowIndex={ changeRowIndex }
-            setSelectedTableData={ setSelectedTableData }/>
+            setSelectedRowData={setSelectedRowData}/>
 
             <!-- Table search component -->
             <TablePage page={ pageNumber }

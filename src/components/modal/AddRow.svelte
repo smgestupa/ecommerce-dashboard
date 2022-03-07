@@ -1,8 +1,7 @@
 <script>
     /**
-    *  Imports
-    */
-
+     * Imports
+     */
     import { fly, fade } from 'svelte/transition';
     import { onMount } from 'svelte';
     import { showAddRowModal } from "$stores/stores.js";
@@ -12,9 +11,8 @@
 
 
     /**
-    *  Variables 
-    */
-
+     * Variables
+     */
     export let tableName, tableHeaders, tableRefresh; // Prop variable(s)
     const statusMessage = "You have successfully added row(s) to the database.";
     let rows = {}; // List of rows that is expected to be added
@@ -24,20 +22,22 @@
 
     
     /**
-    *   Functions 
-    */
-
+     * Will be used to add
+     * a row to a table
+     */
     const addToTable = async () => {
         modalLoading = true;
         
         // Create a variable, that will filter
         // disabled columns
         let columns = tableHeaders.filter( col => !disabledColumns.includes( col ) );
+
         // Re-assign as a new Map object, and pass the old [columns] as the value
         columns = new Map().set( "columns", columns );
         const rows = saveAddedRows(); // Get all existing (new) rows
         
         const requestBody = new Set(); // Will be used to pass as the body
+
         // Append data to the Set object, through chaining
         requestBody.add( Object.fromEntries( columns ) ).add( [ ...rows ] );
         
@@ -49,9 +49,8 @@
                 },
                 body: JSON.stringify( [ ...requestBody ] )
             } );
-            const res = await req.status;
 
-            statusCode = res;
+            statusCode = req.status;
             tableRefresh();
         } catch ( err ) {
             console.error( err );
@@ -61,10 +60,24 @@
         setTimeout( () => closeModal(), 1500 );
     }
 
+    /**
+     * Will close this
+     * component modal
+     */
     const closeModal = () => $showAddRowModal = false;
 
-    const initializeRow = () => numberOfRows++;
+    /**
+     * Will be used to add
+     * new rows
+     */
+    const addRow = () => numberOfRows++;
 
+    /**
+     * Will be used to disable
+     * a specific column
+     * 
+     * @param headerName The column name
+     */
     const disableColumn = ( headerName ) => {
         if ( disabledColumns.includes( headerName ) ) { // Check if the column is already disabled
             disabledColumns = disabledColumns.filter( column => column !== headerName ); // If it is, then re-enable it
@@ -76,6 +89,11 @@
         disabledColumns = disabledColumns.concat( headerName );
     }
 
+    /**
+     * Will be used to convert
+     * newly added rows into JSON,
+     * to give to the database
+     */
     const saveAddedRows = () => {
         const rowsToJSON = new Set(); // Will be used to convert (new) rows into JSON format
 
@@ -85,7 +103,8 @@
             // Loop to get the column and value
             // under it, as the key-value pair
             for ( let r = 0; r < tableHeaders.length; r++ ) {
-                // If the specific column is disabled, skip
+                // If the specific column is 
+                // disabled, then skip
                 if ( disabledColumns.includes( tableHeaders[ r ] ) ) continue;
                 row.set( tableHeaders[ r ], rows[ tableHeaders[ r ] + "." + i ] || "" );
             }
@@ -96,6 +115,12 @@
         return rowsToJSON;
     }
 
+    /**
+     * Will be used to remove a certain
+     * row from the table tag
+     * 
+     * @param index The position of the row inside the table tag
+     */
     const removeTableRow = ( index ) => {
         const table = document.getElementById( "add-table" );
 
@@ -103,7 +128,7 @@
         table.removeChild( table.getElementsByTagName( "tbody" )[ index ] );
     }
 
-    onMount( () => initializeRow() );
+    onMount( () => addRow() ); // When this component initializes, add 1 row
 </script>
 
 <section class="modal" out:fade={ { duration: 300 } }>
@@ -184,7 +209,7 @@
     
                         <!-- Add row button -->
                         <div class="modal-button-row"
-                        on:click={ () => initializeRow() }>
+                        on:click={ () => addRow() }>
                             <button>Add new row</button>
                         </div>
                     </section>

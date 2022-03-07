@@ -1,8 +1,7 @@
 <script>
     /**
-    *  Imports 
-    */
-
+     * Imports
+     */
     import { fly, fade } from 'svelte/transition';
     import { showEditRowModal } from "$stores/stores.js";
     import { X, Info } from "$icons/svg.js";
@@ -11,23 +10,27 @@
 
 
     /**
-    *  Variables
-    */
-
-    export let tableName, tableHeaders, selectedTableData; // Prop variable(s)
+     * Variables
+     */
+    export let tableName, tableHeaders, selectedRowData; // Prop variable(s)
     export let tableRefresh; // Prop function(s)
-    const selectedColumnsData = Object.entries( selectedTableData[ 1 ] );
-    const newColumnsData = Object.entries( selectedTableData[ 1 ] );
+    const selectedColumnsData = Object.entries( selectedRowData[ 1 ] );
+    const newColumnsData = Object.entries( selectedRowData[ 1 ] );
     const statusMessage = "You have successfully edited the selected row.";
     let modalLoading = false, statusCode;
 
 
     /**
-    *   Functions
-    */
-
+     * Will close this
+     * component modal
+     */
     const closeModal = () => $showEditRowModal = false;
 
+    /**
+     * Will be used to edit
+     * a row, with new row
+     * values
+     */
     const editRow = async () => {
         modalLoading = true;
     
@@ -45,9 +48,8 @@
                 },
                 body: responseBody
             } );
-            const res = await req.status;
 
-            statusCode = res;
+            statusCode = req.status;
             tableRefresh();
         } catch ( err ) {
             console.error( err );

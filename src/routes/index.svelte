@@ -1,16 +1,24 @@
 <script>
-    // Imports
+    /**
+     * Imports
+     */
     import { fade } from "svelte/transition";
-    import { dashboardRefresh, showConfirmDeleteTableModal } from "$stores/stores.js";
+    import { dashboardLoading, showConfirmDeleteTableModal } from "$stores/stores.js";
     import { Loading, Warning } from "$icons/svg.js";
     import Dashboard from "$components/index/Dashboard.svelte";
     import ConfirmDeleteTable from "$components/modal/ConfirmDeleteTable.svelte";
 
-    // Variables
+
+    /**
+     * Variables
+     */
     let tables = [], selectedTable = "";
 
-    // This will fetch all available tables
-    // from the specified database
+
+    /**
+     * Will fetch available tables 
+     * from the specified URL server
+     */
     const fetchTables = async () => {
         try {
             // Fetch table rows in JSON format
@@ -33,10 +41,15 @@
         }
     }
 
-    // This will be used to open the modal for deleting tables
+    /**
+     * Will open the modal for 
+     * deleting tables
+     * 
+     * @param tableName The table name
+     */
     const openConfirmDeleteTableModal = ( tableName ) => {
         selectedTable = tableName; // Pass in the name of the selected table
-        $showConfirmDeleteTableModal = true; // Show the modal
+        $showConfirmDeleteTableModal = true; // Open the modal
     }
 </script>
 
@@ -61,7 +74,7 @@
         <ConfirmDeleteTable tableName={ selectedTable } />
     { /if }
     
-    { #if !$dashboardRefresh }
+    { #if !$dashboardLoading }
         <main in:fade={ { duration: 300 } }>
             <Dashboard tables={ tables }
             openConfirmDeleteTableModal={ openConfirmDeleteTableModal } />
