@@ -1,4 +1,4 @@
-# Backend Dashboard
+# E-Commerce Dashboard
 The repository for the [`ecommerce-backend`](https://github.com/laazyCmd/ecommerce-backend)'s dashboard, made using SvelteKit and TailwindCSS.
 
 # [Screenshots](https://github.com/laazyCmd/ecommerce-backend/tree/develop/screenshots)
